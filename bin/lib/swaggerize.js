@@ -4,7 +4,8 @@ var fs = require('fs'),
     path = require('path'),
     mkdirp = require('mkdirp'),
     schema = require('swaggerize-builder/lib/schema'),
-    create = require('./create');
+    create = require('./create'),
+    util = require('util');
 
 module.exports = function (options) {
     var apiPath, modelsPath, handlersPath, testsPath, validation, api;
@@ -13,7 +14,7 @@ module.exports = function (options) {
         console.error('swaggerize --api <swagger document> [[--models <models dir>] | [--handlers <handlers dir>] | [--tests <tests dir>]]');
         return 1;
     }
-
+    
     apiPath = options.api;
     modelsPath = options.models;
     handlersPath = options.handlers;
@@ -33,7 +34,12 @@ module.exports = function (options) {
     validation = schema.validate(api);
 
     if (!validation.valid) {
-        console.error(validation.error.message);
+        console.error('%s: %s', validation.error.dataPath, validation.error);
+        if (validation.error.subErrors) {
+            validation.error.subErrors.forEach(function (subError) {
+                console.error('%s: %s', subError.dataPath, subError);
+            })
+        }
         return 1;
     }
 
