@@ -3,7 +3,6 @@
 var fs = require('fs'),
     path = require('path'),
     mkdirp = require('mkdirp'),
-    schema = require('swaggerize-builder/lib/schema'),
     create = require('./create');
 
 module.exports = function (options) {
